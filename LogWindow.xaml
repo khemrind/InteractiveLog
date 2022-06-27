@@ -1,0 +1,22 @@
+﻿<Window
+    x:Class="Interactive.LogWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Interactive"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!--Official Themes: C:\Users\$USER\.nuget\packages\microsoft.windowsappsdk\1.1.1\lib\uap10.0\Microsoft.UI\Themes-->
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Background="#0C0C0C">
+                <RichTextBlock x:Name="block" FontFamily="Cascadia Code" FontSize="16" TextWrapping="WrapWholeWords" Foreground="#E6E6E6"/>
+                <local:CommandLine x:Name="commandline" />
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</Window>
