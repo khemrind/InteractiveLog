@@ -9,14 +9,34 @@
 
     <!--Official Themes: C:\Users\$USER\.nuget\packages\microsoft.windowsappsdk\1.1.1\lib\uap10.0\Microsoft.UI\Themes-->
 
-    <Grid>
-        <ScrollViewer>
-            <StackPanel Background="#0C0C0C">
-                <RichTextBlock x:Name="block" FontFamily="Cascadia Code" FontSize="16" TextWrapping="WrapWholeWords" Foreground="#E6E6E6"/>
-                <local:CommandLine x:Name="commandline" />
-            </StackPanel>
-        </ScrollViewer>
+    <Grid x:Name="root">
+        <Rectangle x:Name="dragArea" Height="40" Width="{Binding ElementName=root, Path=ActualWidth}" Fill="Transparent" VerticalAlignment="Top"/>
+        
+        <Grid Padding="5" Background="#0C0C0C" Margin="0,40,0,0">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
+            <TabView Grid.Row="0" Background="Red">
+                <TabViewItem>
+                    <TextBlock Text="moo"/>
+                </TabViewItem>
+            </TabView>
+
+            <ScrollViewer Grid.Row="1">
+                <StackPanel>
+                    <Button Content="Min" Click="MinClick"/>
+                    <Button Content="Max" Click="MaxClick"/>
+                    <Button Content="Close" Click="CloseClick"/>
+                    <StackPanel x:Name="output" Background="Transparent"/>
+                    <local:CommandLine x:Name="commandline" />
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+        
     </Grid>
-
+    
 </Window>
