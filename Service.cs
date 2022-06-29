@@ -2,11 +2,12 @@
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Interactive
 {
-    public static class Core
+    public static class Service
     {
         private static ScriptState State { get; set; }
         private static ScriptOptions Options = ScriptOptions.Default;
@@ -14,17 +15,17 @@ namespace Interactive
         public static async void Initialize()
         {
             // create initial state
-            State = await CSharpScript.RunAsync("", options: Options);
+            State = await CSharpScript.RunAsync("int moo = 3;", options: Options);
 
             // configure default assemblies
-            AddReference(typeof(Core));
+            AddReference(typeof(Service));
         }
 
         public static async void AddReference(Type target)
         {
             var reference = MetadataReference.CreateFromFile(target.Assembly.Location);
             Options = Options.AddReferences(reference);
-            await State.ContinueWithAsync("", options: Options);
+            State = await State.ContinueWithAsync($"using {target.Namespace};", options: Options);
         }
 
         public static async Task<object> Parse(string line)

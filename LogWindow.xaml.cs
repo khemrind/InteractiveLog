@@ -2,10 +2,10 @@
 using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Diagnostics;
 using Windows.Graphics;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Input.Preview.Injection;
 using WinRT.Interop;
@@ -16,6 +16,11 @@ namespace Interactive
     public sealed partial class LogWindow : Window
     {
         private static LogWindow Instance;
+        private static AppWindow CurrentWindow;
+        private static bool Maximized = false;
+
+        // customize window buttons
+        // limit scrolling
 
         public LogWindow()
         {
@@ -32,8 +37,9 @@ namespace Interactive
                 {
                     commandline.Editor.TextDocument.GetText(TextGetOptions.None, out string text);
                     var input = text[14..];
-                    string result = (await Core.Parse(input) ?? new object()).ToString();
+                    string result = (await Service.Parse(input) ?? new object()).ToString();
 
+                    output.Children.Add(new OutputLine(text.Trim()));
                     output.Children.Add(new OutputLine(result));
 
                     commandline.Editor.TextDocument.SetText(TextSetOptions.None, "session/user> ");
@@ -60,13 +66,36 @@ namespace Interactive
             };
         }
 
+        private double ChangeX = 0;
+        private double ChangeY = 0;
+        private void DragDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            ChangeX += e.Delta.Translation.X;
+            ChangeY += e.Delta.Translation.Y;
+
+            if (ChangeX > 1 || ChangeX < 1 && ChangeY > 1 || ChangeY < 1)
+            {
+                int intx = (int)ChangeX;
+                int inty = (int)ChangeY;
+
+                ChangeX -= intx;
+                ChangeY -= inty;
+
+                var position = CurrentWindow.Position;
+                position.X += intx;
+                position.Y += inty;
+                CurrentWindow.Move(position);
+            }
+        }
+
         public void SetupWindow()
         {
             // register instance
             if (Instance == null) Instance = this;
+            CurrentWindow = GetAppWindow();
 
             // load assemblies and start compiler
-            Core.Initialize();
+            Service.Initialize();
 
             // resize window
             Resize(960, 640);
@@ -76,8 +105,15 @@ namespace Interactive
             InitializeComponent();
 
             // set draggable area
-            SetTitleBar(dragArea);
             ExtendsContentIntoTitleBar = true;
+            SetTitleBar(fakeTitleBar);
+        }
+
+        private AppWindow GetAppWindow()
+        {
+            var windowHandle = WindowNative.GetWindowHandle(this);
+            WindowId myWndId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+            return AppWindow.GetFromWindowId(myWndId);
         }
 
         private void Resize(int width, int height)
@@ -113,7 +149,12 @@ namespace Interactive
         }
 
         private void MinClick(object sender, RoutedEventArgs e) => Minimize();
-        private void MaxClick(object sender, RoutedEventArgs e) => Maximize();
+        private void MaxClick(object sender, RoutedEventArgs e)
+        {
+            if (!Maximized) Maximize();
+            else ShowNormal();
+            Maximized = !Maximized;
+        }
         private void CloseClick(object sender, RoutedEventArgs e) => Close();
 
     }

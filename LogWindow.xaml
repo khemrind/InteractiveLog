@@ -6,36 +6,64 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    
+    <!--Official Themes: C:\Users\$USER\.nuget\packages\microsoft.windowsappsdk\1.1.1\lib\uap10.0\Microsoft.UI\Themes -->
 
-    <!--Official Themes: C:\Users\$USER\.nuget\packages\microsoft.windowsappsdk\1.1.1\lib\uap10.0\Microsoft.UI\Themes-->
-
-    <Grid x:Name="root">
-        <Rectangle x:Name="dragArea" Height="40" Width="{Binding ElementName=root, Path=ActualWidth}" Fill="Transparent" VerticalAlignment="Top"/>
+    <Grid Name="root">
         
-        <Grid Padding="5" Background="#0C0C0C" Margin="0,40,0,0">
+        <Rectangle Name="fakeTitleBar" Height="1" Width="{Binding ElementName=root, Path=ActualWidth}" Fill="Transparent"/>
+
+        <Grid x:Name="maincontent" Background="#0C0C0C">
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TabView Grid.Row="0" Background="Red">
-                <TabViewItem>
-                    <TextBlock Text="moo"/>
-                </TabViewItem>
-            </TabView>
+            <Grid Grid.Row="0" Background="LightGray">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TabView Grid.Column="0" Height="40" Margin="5,-8,0,0" VerticalAlignment="Bottom" TabWidthMode="SizeToContent">
+                    <!-- tab view item header: add programmatically; the UI is fucked, crash no error -->
+                    <TabViewItem Header="Session 1"/>
+                </TabView>
+
+                <Rectangle Grid.Column="1" Height="40" Fill="Transparent" VerticalAlignment="Top" ManipulationMode="TranslateX, TranslateY" ManipulationDelta="DragDelta">
+                    <Rectangle.RenderTransform>
+                        <CompositeTransform/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="Setting" Height="40" Width="48"/>
+                    <Button Content="Min" Click="MinClick" Height="40" Width="48"/>
+                    <Button Content="Max" Click="MaxClick" Height="40" Width="48"/>
+                    <Button Content="Close" Click="CloseClick" Height="40" Width="48"/>
+                </StackPanel>
+                
+            </Grid>
 
             <ScrollViewer Grid.Row="1">
-                <StackPanel>
-                    <Button Content="Min" Click="MinClick"/>
-                    <Button Content="Max" Click="MaxClick"/>
-                    <Button Content="Close" Click="CloseClick"/>
-                    <StackPanel x:Name="output" Background="Transparent"/>
+                <StackPanel Padding="5,3,5,3" Spacing="2">
+                    <StackPanel x:Name="output" Background="Transparent" Spacing="1"/>
                     <local:CommandLine x:Name="commandline" />
                 </StackPanel>
             </ScrollViewer>
 
         </Grid>
+
+
+
+        <Rectangle Width="200" Height="14" Fill="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" ManipulationMode="TranslateX, TranslateY" ManipulationDelta="DragDelta">
+            <Rectangle.RenderTransform>
+                <CompositeTransform/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
         
     </Grid>
     
