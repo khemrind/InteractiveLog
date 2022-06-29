@@ -16,9 +16,9 @@
     <PRIResource Remove="TestWinUI\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="ConsoleControl.xaml" />
     <None Remove="Elements\CommandLine.xaml" />
     <None Remove="Elements\CustomRichTextBox.xaml" />
-    <None Remove="Elements\OutputLine.xaml" />
     <None Remove="LogWindow.xaml" />
   </ItemGroup>
 
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Elements\OutputLine.xaml">
+    <Page Update="ConsoleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

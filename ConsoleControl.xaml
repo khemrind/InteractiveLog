@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Interactive.OutputLine"
+    x:Class="Interactive.ConsoleControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Interactive"
@@ -7,7 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="Transparent">
-        <RichTextBlock x:Name="block" FontFamily="Cascadia Code" FontSize="14" TextWrapping="WrapWholeWords" Foreground="#E6E6E6" SelectionHighlightColor="Gray"/>
-    </Grid>
+    <ScrollViewer Background="#0C0C0C">
+        <StackPanel Padding="8">
+            <RichTextBlock x:Name="output" FontFamily="Cascadia Code" FontSize="14" Foreground="#d9d9d9"/>
+            <local:CommandLine x:Name="commandline"/>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

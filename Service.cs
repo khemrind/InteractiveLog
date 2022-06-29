@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace Interactive
     {
         private static ScriptState State { get; set; }
         private static ScriptOptions Options = ScriptOptions.Default;
+        private static List<string> History = new();
 
         public static async void Initialize()
         {
@@ -30,6 +32,10 @@ namespace Interactive
 
         public static async Task<object> Parse(string line)
         {
+            // save line
+            History.Add(line);
+
+            // attempt to parse and execute
             try
             {
                 State = await State.ContinueWithAsync(line);

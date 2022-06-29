@@ -6,8 +6,6 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using System.Diagnostics;
 using Windows.Graphics;
-using Windows.UI;
-using Windows.UI.Input.Preview.Injection;
 using WinRT.Interop;
 using static PInvoke.User32;
 
@@ -16,55 +14,34 @@ namespace Interactive
     public sealed partial class LogWindow : Window
     {
         private static LogWindow Instance;
-        private static AppWindow CurrentWindow;
-        private static bool Maximized = false;
-
-        // customize window buttons
-        // limit scrolling
 
         public LogWindow()
         {
-            // setup log window
-            SetupWindow();
+            // register instance
+            if (Instance == null) Instance = this;
+            CurrentWindow = GetAppWindow();
 
-            commandline.Editor.TextDocument.SetText(TextSetOptions.None, "session/user> ");
-            commandline.Editor.TextDocument.Selection.SetIndex(TextRangeUnit.Character, 15, false);
+            // load assemblies and start compiler
+            Service.Initialize();
 
-            commandline.PreviewKeyDown += async (sender, args) =>
-            {
-                var key = args.Key;
-                if (key == Windows.System.VirtualKey.Enter)
-                {
-                    commandline.Editor.TextDocument.GetText(TextGetOptions.None, out string text);
-                    var input = text[14..];
-                    string result = (await Service.Parse(input) ?? new object()).ToString();
+            // resize window
+            Resize(960, 640);
 
-                    output.Children.Add(new OutputLine(text.Trim()));
-                    output.Children.Add(new OutputLine(result));
+            // configure window
+            Title = "Interactive Log";
+            InitializeComponent();
 
-                    commandline.Editor.TextDocument.SetText(TextSetOptions.None, "session/user> ");
-                    commandline.Editor.TextDocument.Selection.SetIndex(TextRangeUnit.Character, 15, false);
-
-                    // workaround for stupid two lines after clear
-                    var inputInjector = InputInjector.TryCreate();
-                    var keystroke = new InjectedInputKeyboardInfo
-                    {
-                        VirtualKey = (ushort)Windows.System.VirtualKey.Left,
-                        KeyOptions = InjectedInputKeyOptions.None
-                    };
-                    var keystrokeB = new InjectedInputKeyboardInfo
-                    {
-                        VirtualKey = (ushort)Windows.System.VirtualKey.Delete,
-                        KeyOptions = InjectedInputKeyOptions.None
-                    };
-                    inputInjector.InjectKeyboardInput(new[] { keystrokeB, keystroke, keystrokeB });
-                }
-
-                //commandline.Selection.CharacterFormat.Bold = FormatEffect.Toggle;
-                commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#DA3300");
-
-            };
+            // set draggable area
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(fakeTitleBar);
         }
+
+        public static void Queue(Action task)
+        { // Queues a task from non-UI threads
+            Instance.DispatcherQueue.TryEnqueue(() => { task(); });
+        }
+
+        #region Setup Window Drag
 
         private double ChangeX = 0;
         private double ChangeY = 0;
@@ -88,26 +65,12 @@ namespace Interactive
             }
         }
 
-        public void SetupWindow()
-        {
-            // register instance
-            if (Instance == null) Instance = this;
-            CurrentWindow = GetAppWindow();
+        #endregion
 
-            // load assemblies and start compiler
-            Service.Initialize();
+        #region Setup Window Workarounds
 
-            // resize window
-            Resize(960, 640);
-
-            // configure window
-            Title = "Interactive Log";
-            InitializeComponent();
-
-            // set draggable area
-            ExtendsContentIntoTitleBar = true;
-            SetTitleBar(fakeTitleBar);
-        }
+        private static AppWindow CurrentWindow;
+        private static bool Maximized = false;
 
         private AppWindow GetAppWindow()
         {
@@ -143,19 +106,18 @@ namespace Interactive
             ShowWindow(windowHandle, WindowShowStyle.SW_SHOWNORMAL);
         }
 
-        public static void Queue(Action task)
-        { // Queues a task from non-UI threads
-            Instance.DispatcherQueue.TryEnqueue(() => { task(); });
-        }
-
         private void MinClick(object sender, RoutedEventArgs e) => Minimize();
+
         private void MaxClick(object sender, RoutedEventArgs e)
         {
             if (!Maximized) Maximize();
             else ShowNormal();
             Maximized = !Maximized;
         }
+
         private void CloseClick(object sender, RoutedEventArgs e) => Close();
+
+        #endregion
 
     }
 }

@@ -13,7 +13,7 @@
         
         <Rectangle Name="fakeTitleBar" Height="1" Width="{Binding ElementName=root, Path=ActualWidth}" Fill="Transparent"/>
 
-        <Grid x:Name="maincontent" Background="#0C0C0C">
+        <Grid x:Name="maincontent">
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -33,6 +33,7 @@
                     <TabViewItem Header="Session 1"/>
                 </TabView>
 
+                <!--main draggable area-->
                 <Rectangle Grid.Column="1" Height="40" Fill="Transparent" VerticalAlignment="Top" ManipulationMode="TranslateX, TranslateY" ManipulationDelta="DragDelta">
                     <Rectangle.RenderTransform>
                         <CompositeTransform/>
@@ -48,17 +49,12 @@
                 
             </Grid>
 
-            <ScrollViewer Grid.Row="1">
-                <StackPanel Padding="5,3,5,3" Spacing="2">
-                    <StackPanel x:Name="output" Background="Transparent" Spacing="1"/>
-                    <local:CommandLine x:Name="commandline" />
-                </StackPanel>
-            </ScrollViewer>
+            <!--command line-->
+            <local:ConsoleControl Grid.Row="1"/>
 
         </Grid>
 
-
-
+        <!--thin draggable area-->
         <Rectangle Width="200" Height="14" Fill="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" ManipulationMode="TranslateX, TranslateY" ManipulationDelta="DragDelta">
             <Rectangle.RenderTransform>
                 <CompositeTransform/>
