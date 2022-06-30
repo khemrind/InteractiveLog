@@ -7,10 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer Background="#0C0C0C">
-        <StackPanel Padding="8">
-            <RichTextBlock x:Name="output" FontFamily="Cascadia Code" FontSize="14" Foreground="#d9d9d9"/>
+    <ScrollViewer x:Name="scroll" Background="#0C0C0C" Padding="5">
+        <StackPanel Spacing="-1">
+            <RichTextBlock x:Name="output" FontFamily="Cascadia Code" FontSize="14" Foreground="#d9d9d9" SelectionHighlightColor="Gray" LineStackingStrategy="MaxHeight"/>
             <local:CommandLine x:Name="commandline"/>
+            <Grid Height="200"/>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

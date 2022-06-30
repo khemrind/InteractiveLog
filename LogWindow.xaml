@@ -7,8 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     
-    <!--Official Themes: C:\Users\$USER\.nuget\packages\microsoft.windowsappsdk\1.1.1\lib\uap10.0\Microsoft.UI\Themes -->
-
     <Grid Name="root">
         
         <Rectangle Name="fakeTitleBar" Height="1" Width="{Binding ElementName=root, Path=ActualWidth}" Fill="Transparent"/>
@@ -41,10 +39,10 @@
                 </Rectangle>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Content="Setting" Height="40" Width="48"/>
-                    <Button Content="Min" Click="MinClick" Height="40" Width="48"/>
-                    <Button Content="Max" Click="MaxClick" Height="40" Width="48"/>
-                    <Button Content="Close" Click="CloseClick" Height="40" Width="48"/>
+                    <local:TitleBarButton />
+                    <local:TitleBarButton Click="MinClick"/>
+                    <local:TitleBarButton Click="MaxClick"/>
+                    <local:TitleBarButton Click="CloseClick"/>
                 </StackPanel>
                 
             </Grid>

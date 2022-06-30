@@ -9,17 +9,27 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestWinUI\**" />
+    <Compile Remove="uitest\**" />
     <Content Remove="TestWinUI\**" />
+    <Content Remove="uitest\**" />
     <EmbeddedResource Remove="TestWinUI\**" />
+    <EmbeddedResource Remove="uitest\**" />
     <None Remove="TestWinUI\**" />
+    <None Remove="uitest\**" />
     <Page Remove="TestWinUI\**" />
+    <Page Remove="uitest\**" />
     <PRIResource Remove="TestWinUI\**" />
+    <PRIResource Remove="uitest\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="ConsoleControl.xaml" />
     <None Remove="Elements\CommandLine.xaml" />
-    <None Remove="Elements\CustomRichTextBox.xaml" />
+    <None Remove="Elements\CustomRichEditBox.xaml" />
+    <None Remove="Elements\TitleBarButton.xaml" />
     <None Remove="LogWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Themes.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,13 +40,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="ConsoleControl.xaml">
+    <Page Update="Elements\TitleBarButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <None Update="Themes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Elements\ConsoleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Elements\CustomRichTextBox.xaml">
+    <Page Update="Elements\CustomRichEditBox.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

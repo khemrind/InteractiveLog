@@ -12,7 +12,8 @@ namespace Interactive
     {
         private static ScriptState State { get; set; }
         private static ScriptOptions Options = ScriptOptions.Default;
-        private static List<string> History = new();
+
+        public readonly static List<string> History = new();
 
         public static async void Initialize()
         {
@@ -33,7 +34,12 @@ namespace Interactive
         public static async Task<object> Parse(string line)
         {
             // save line
-            History.Add(line);
+            if (History.Count != 0)
+            {
+                var last = History[^1];
+                if (line != last) History.Add(line);
+            }
+            else History.Add(line);
 
             // attempt to parse and execute
             try
