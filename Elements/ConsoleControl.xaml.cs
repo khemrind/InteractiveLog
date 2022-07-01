@@ -7,7 +7,9 @@ using System;
 using System.Reflection;
 using Windows.System;
 using Windows.UI;
+using static Interactive.Service;
 using Windows.UI.Input.Preview.Injection;
+using System.Diagnostics;
 
 namespace Interactive
 {
@@ -18,10 +20,9 @@ namespace Interactive
 
         private Action<string> AddLine;
 
-        private InputInjector Injector = InputInjector.TryCreate();
+        private readonly InputInjector Injector = InputInjector.TryCreate();
 
-        private int SelectedCount = 0;
-        private string SelectedLine = null;
+        private int SelectedIndex = -1;
 
         public ConsoleControl()
         {
@@ -31,19 +32,17 @@ namespace Interactive
             scroll.PreviewKeyDown += (sender, args) =>
             {
                 // styling
-                commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#DA3300");
+                commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#47C99A"); //DA3300
 
                 var key = args.Key;
                 args.Handled = true;
 
                 if (key == VirtualKey.Enter) HandleEnterKey();
                 else if (key == VirtualKey.Up) HandleUpKey();
-                else if (key == VirtualKey.Up) HandleDownKey();
+                else if (key == VirtualKey.Down) HandleDownKey();
                 else args.Handled = false;
             };
         }
-
-        
 
         public void SetupStartMessage()
         {
@@ -59,59 +58,56 @@ namespace Interactive
             AddLine = (line) => run.Text += "\n" + line;
         }
 
-
         public async void HandleEnterKey()
         {
             // retrieve input
-            commandline.Editor.TextDocument.GetText(TextGetOptions.None, out string input);
-
-            // clear
-            commandline.Editor.TextDocument.SetText(TextSetOptions.None, string.Empty);
+            commandline.GetText(out string input);
+            commandline.Clear();
 
             if (input.Trim().Length != 0)
             {
                 // echo input
                 AddLine($"session/user> {input}");
-                
+
+                // save line
+                if (History.Count != 0)
+                {
+                    // only add non-duplicate
+                    var last = History[^1];
+                    if (input != last) History.Add(input);
+                }
+                else History.Add(input);
+
                 // parse input
-                var result = await Service.Parse(input);
+                var result = await Parse(input);
                 if (result != null) AddLine(result.ToString());
                 AddLine(string.Empty);
             }
 
-            // workaround for stupid two lines after enter, clear
-            //InjectKey(VirtualKey.Delete);
-            //InjectKey(VirtualKey.Left);
-            //InjectKey(VirtualKey.Delete);
+            // delete old history entry, shift to top
+            if (SelectedIndex > 0)
+            {
+                var last = History.Count - 1;
+                History.RemoveAt(last - SelectedIndex);
+                History.Add(input);
+            }
 
             // reset history
-            SelectedCount = 0;
+            SelectedIndex = -1;
         }
 
         public void HandleUpKey()
         {
-            var last = Service.History.Count - 1;
-            if (last != -1 && last >= SelectedCount)
-            {
-                var line = Service.History[last - SelectedCount];
-                commandline.Editor.TextDocument.SetText(TextSetOptions.None, line);
-                //InjectKey(VirtualKey.Right);
-                //InjectKey(VirtualKey.Delete);
-                SelectedCount++;
-            }
+            if (SelectedIndex < History.Count - 1) SelectedIndex++;
+            commandline.SetText(GetHistory(SelectedIndex));
+            commandline.MoveToEnd();
         }
 
         public void HandleDownKey()
         {
-            var last = Service.History.Count - 1;
-            if (SelectedCount > 0)
-            {
-                SelectedCount--;
-                var line = Service.History[last - SelectedCount];
-                commandline.Editor.TextDocument.SetText(TextSetOptions.None, line);
-                //InjectKey(VirtualKey.Right);
-                //InjectKey(VirtualKey.Delete);
-            }
+            if (SelectedIndex > -1) SelectedIndex--;
+            commandline.SetText(GetHistory(SelectedIndex));
+            commandline.MoveToEnd();
         }
 
         public void InjectKey(VirtualKey key)

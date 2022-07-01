@@ -13,12 +13,13 @@ namespace Interactive
         private static ScriptState State { get; set; }
         private static ScriptOptions Options = ScriptOptions.Default;
 
+        public readonly static List<string> Scripts = new();
         public readonly static List<string> History = new();
 
         public static async void Initialize()
         {
             // create initial state
-            State = await CSharpScript.RunAsync("int moo = 3;", options: Options);
+            State = await CSharpScript.RunAsync("int _ = 0;", options: Options);
 
             // configure default assemblies
             AddReference(typeof(Service));
@@ -33,14 +34,6 @@ namespace Interactive
 
         public static async Task<object> Parse(string line)
         {
-            // save line
-            if (History.Count != 0)
-            {
-                var last = History[^1];
-                if (line != last) History.Add(line);
-            }
-            else History.Add(line);
-
             // attempt to parse and execute
             try
             {
@@ -48,6 +41,12 @@ namespace Interactive
                 return State.ReturnValue;
             }
             catch (Exception ex) { return ex.Message; }
+        }
+
+        public static string GetHistory(int index)
+        {
+            if (index >= 0) return History[(History.Count - 1) - index];
+            else return string.Empty;
         }
 
         //public static void GetVariables()

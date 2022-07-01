@@ -34,6 +34,12 @@ namespace Interactive
             // set draggable area
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(fakeTitleBar);
+
+            // set button icons
+            settingsbutton.Glyph = "\xE977";
+            minbutton.Glyph = "\xE977";
+            maxbutton.Glyph = "\xE977";
+            closebutton.Glyph = "\xEDAE";
         }
 
         public static void Queue(Action task)

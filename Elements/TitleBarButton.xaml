@@ -28,7 +28,7 @@
         
         <Button x:Name="button" Height="40" Width="48" BorderThickness="0" CornerRadius="0" Background="Transparent"/>
 
-        <FontIcon x:Name="icon" FontFamily="Segoe MDL2 Assets" IsHitTestVisible="False"  Glyph="&#xE962;"/>
+        <FontIcon x:Name="icon" FontFamily="Segoe MDL2 Assets" IsHitTestVisible="False"/>
 
     </Grid>
 </UserControl>

@@ -13,5 +13,20 @@ namespace Interactive
         {
             InitializeComponent();
         }
+
+        public void Clear() => SetText(string.Empty);
+
+        public void GetText(out string content, TextGetOptions options = TextGetOptions.None)
+            => box.TextDocument.GetText(options, out content);
+
+        public void SetText(string content, TextSetOptions options = TextSetOptions.None) 
+            => box.TextDocument.SetText(options, content);
+
+        public void MoveToEnd()
+        {
+            GetText(out string content);
+            box.TextDocument.Selection.StartPosition = content.Length - 1;
+            box.TextDocument.Selection.EndPosition = content.Length - 1;
+        }
     }
 }

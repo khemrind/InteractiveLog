@@ -39,10 +39,10 @@
                 </Rectangle>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <local:TitleBarButton />
-                    <local:TitleBarButton Click="MinClick"/>
-                    <local:TitleBarButton Click="MaxClick"/>
-                    <local:TitleBarButton Click="CloseClick"/>
+                    <local:TitleBarButton x:Name="settingsbutton" />
+                    <local:TitleBarButton x:Name="minbutton" Click="MinClick"/>
+                    <local:TitleBarButton x:Name="maxbutton" Click="MaxClick"/>
+                    <local:TitleBarButton x:Name="closebutton" Click="CloseClick"/>
                 </StackPanel>
                 
             </Grid>
