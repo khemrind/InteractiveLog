@@ -45,7 +45,7 @@ namespace Interactive
 
         public static string GetHistory(int index)
         {
-            if (index >= 0) return History[(History.Count - 1) - index];
+            if (index >= 0) return History[History.Count - 1 - index];
             else return string.Empty;
         }
 

@@ -10,6 +10,7 @@ using Windows.UI;
 using static Interactive.Service;
 using Windows.UI.Input.Preview.Injection;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Interactive
 {
@@ -31,16 +32,27 @@ namespace Interactive
 
             scroll.PreviewKeyDown += (sender, args) =>
             {
-                // styling
-                commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#47C99A"); //DA3300
-
                 var key = args.Key;
                 args.Handled = true;
 
-                if (key == VirtualKey.Enter) HandleEnterKey();
-                else if (key == VirtualKey.Up) HandleUpKey();
+                // history related
+                if (key == VirtualKey.Up) HandleUpKey();
                 else if (key == VirtualKey.Down) HandleDownKey();
-                else args.Handled = false;
+
+                // not history related
+                else
+                {
+                    if (key == VirtualKey.Enter) HandleEnterKey();
+
+                    else // not a special key
+                    {
+                        HandleContentKey();
+                        args.Handled = false;
+                    }
+
+                    // reset history
+                    SelectedIndex = -1;
+                }
             };
         }
 
@@ -58,6 +70,21 @@ namespace Interactive
             AddLine = (line) => run.Text += "\n" + line;
         }
 
+        private void HandleContentKey()
+        {
+            //var text = commandline.Text;
+
+            commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#47C99A");
+
+            //var header = @"{\colortbl;\red255\green255\blue255;}";
+
+            //var replaced = Regex.Replace(text, "\\\".*\\\"", "{\\cf1$0}");
+
+            //commandline.SetText(@"{\rtf1\ansi " + header + replaced + "}", TextSetOptions.FormatRtf);
+
+            // error DA3300
+        }
+
         public async void HandleEnterKey()
         {
             // retrieve input
@@ -68,6 +95,10 @@ namespace Interactive
             {
                 // echo input
                 AddLine($"session/user> {input}");
+
+                // delete old history entry
+                if (SelectedIndex > 0)
+                    History.RemoveAt(History.Count - SelectedIndex - 1);
 
                 // save line
                 if (History.Count != 0)
@@ -83,17 +114,6 @@ namespace Interactive
                 if (result != null) AddLine(result.ToString());
                 AddLine(string.Empty);
             }
-
-            // delete old history entry, shift to top
-            if (SelectedIndex > 0)
-            {
-                var last = History.Count - 1;
-                History.RemoveAt(last - SelectedIndex);
-                History.Add(input);
-            }
-
-            // reset history
-            SelectedIndex = -1;
         }
 
         public void HandleUpKey()
