@@ -34,13 +34,23 @@ namespace Interactive
 
         public static async Task<object> Parse(string line)
         {
+            var time = Stopwatch.StartNew();
             // attempt to parse and execute
             try
             {
                 State = await State.ContinueWithAsync(line);
                 return State.ReturnValue;
             }
-            catch (Exception ex) { return ex.Message; }
+
+            catch (Exception ex) 
+            {
+                return ex.Message; 
+            }
+
+            finally
+            {
+                Debug.WriteLine(time.ElapsedMilliseconds + "ms");
+            }
         }
 
         public static string GetHistory(int index)

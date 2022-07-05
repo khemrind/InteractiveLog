@@ -11,6 +11,7 @@ using static Interactive.Service;
 using Windows.UI.Input.Preview.Injection;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Interactive
 {
@@ -29,6 +30,7 @@ namespace Interactive
         {
             InitializeComponent();
             SetupStartMessage();
+            SetupHandleContent();
 
             scroll.PreviewKeyDown += (sender, args) =>
             {
@@ -44,11 +46,8 @@ namespace Interactive
                 {
                     if (key == VirtualKey.Enter) HandleEnterKey();
 
-                    else // not a special key
-                    {
-                        HandleContentKey();
-                        args.Handled = false;
-                    }
+                    // allow event to pass to the editor
+                    else args.Handled = false;
 
                     // reset history
                     SelectedIndex = -1;
@@ -70,19 +69,29 @@ namespace Interactive
             AddLine = (line) => run.Text += "\n" + line;
         }
 
-        private void HandleContentKey()
+        private async void SetupHandleContent()
         {
+            while (true)
+            {
+                commandline.ProcessText(Highlighter.Process);
+                await Task.Delay(3000);
+            }
+            
+            //commandline.SetPosition();
+
             //var text = commandline.Text;
 
-            commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#47C99A");
+            //commandline.SelectionStyle.ForegroundColor = View.XamlConvert<Color>("#47C99A");
 
-            //var header = @"{\colortbl;\red255\green255\blue255;}";
+            //var header = @"{\colortbl;\red50\green50\blue200;}";
 
-            //var replaced = Regex.Replace(text, "\\\".*\\\"", "{\\cf1$0}");
+            //var replaced = Regex.Replace(text, "\\\"[^\"]*\\\"", "{\\cf1$0}");
 
             //commandline.SetText(@"{\rtf1\ansi " + header + replaced + "}", TextSetOptions.FormatRtf);
 
             // error DA3300
+
+            //commandline.MoveToEnd();
         }
 
         public async void HandleEnterKey()

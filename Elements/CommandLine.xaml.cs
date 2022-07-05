@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Diagnostics;
 
 namespace Interactive
@@ -30,11 +31,26 @@ namespace Interactive
         public void SetText(string content, TextSetOptions options = TextSetOptions.None) 
             => Document.SetText(options, content);
 
+        public void SetPosition(int index)
+        {
+            Selection.StartPosition = index;
+            Selection.EndPosition = index;
+        }
+
         public void MoveToEnd()
         {
             GetText(out string content);
             Selection.StartPosition = content.Length - 1;
             Selection.EndPosition = content.Length - 1;
+        }
+
+        public void ProcessText(Func<string, string> formatter)
+        {
+            int position = Selection.EndPosition;
+            GetText(out string content);
+            string processed = formatter(content);
+            SetText(processed, TextSetOptions.FormatRtf);
+            SetPosition(position);
         }
     }
 }

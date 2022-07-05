@@ -19,7 +19,7 @@
 
         <TextBlock Text="session/user>" Grid.Column="0" FontFamily="Cascadia Code" FontSize="14" Foreground="White"/>
         <RichEditBox x:Name="box" Grid.Column="1" Style="{StaticResource CustomRichEditBoxStyle}" 
-                     TextAlignment="Left" AcceptsReturn="False" HorizontalAlignment="Stretch"/>
+                     TextAlignment="Left" AcceptsReturn="False" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         
     </Grid>
 
